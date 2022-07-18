@@ -3,9 +3,10 @@ import axios from "axios";
 import Results from "./Results";
 import "./Dictionary.css";
 
-export default function Dictionaty() {
-  let [keyword, setKeyword] = useState("");
+export default function Dictionaty(props) {
+  let [keyword, setKeyword] = useState(props.defaultKeyword);
   let [results, setResults] = useState(null);
+  let [loaded, setLoaded] = useState(false);
 
   function handleKeywordChange(event) {
     setKeyword(event.target.value);
@@ -15,24 +16,44 @@ export default function Dictionaty() {
     setResults(response.data[0]);
   }
 
-  function search(event) {
-    event.preventDefault();
+  function search() {
     // documentation: https://dictionaryapi.dev/
-
     let apiUrl = `https://api.dictionaryapi.dev/api/v2/entries/en/${keyword}`;
     axios.get(apiUrl).then(handleResponse);
   }
 
-  return (
-    <div className="Dictionary">
-      <form onSubmit={search}>
-        <input
-          type="search"
-          autoFocus={true}
-          onChange={handleKeywordChange}
-        ></input>
-      </form>
-      <Results results={results} />
-    </div>
-  );
+  function handleSubmit(event) {
+    event.preventDefault();
+    search();
+  }
+
+  function load() {
+    setLoaded(true);
+    search();
+  }
+
+  if (loaded) {
+    return (
+      <div className="Dictionary">
+        <section>
+          <h1>What word do you want to look up?</h1>
+          <form onSubmit={handleSubmit}>
+            <input
+              type="search"
+              autoFocus={true}
+              onChange={handleKeywordChange}
+              defaultValue={props.defaultKeyword}
+            ></input>
+          </form>
+          <div className="hint">
+            Suggested words: sunset, forest, sea, mountain...
+          </div>
+        </section>
+        <Results results={results} />
+      </div>
+    );
+  } else {
+    load();
+    return "Loading...";
+  }
 }

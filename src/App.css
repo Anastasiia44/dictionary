@@ -1,3 +1,16 @@
+body {
+  background: #f9f8fe;
+}
+
+a {
+  color: #5847ad;
+}
+
+header {
+  margin: 30px 0;
+  text-align: center;
+}
+
 .App-footer {
   text-align: center;
   font-size: 14px;
